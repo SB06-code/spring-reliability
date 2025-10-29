@@ -20,3 +20,11 @@ Content-Type: application/json
   "price": 1000,
   "stock": 10
 }
+
+### Change ProductService logger level
+POST http://localhost:8080/actuator/loggers/codeit.sb06.reliability.service.ProductService
+Content-Type: application/json
+
+{
+  "configuredLevel": "DEBUG"
+}

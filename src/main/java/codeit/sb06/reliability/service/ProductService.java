@@ -6,6 +6,7 @@ import codeit.sb06.reliability.exception.DuplicateProductNameException;
 import codeit.sb06.reliability.exception.InsufficientStockException;
 import codeit.sb06.reliability.exception.ProductNotFoundException;
 import codeit.sb06.reliability.repository.ProductRepository;
+import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -22,12 +23,16 @@ public class ProductService {
     @Transactional
     public Product createProduct(ProductCreateRequest request) {
 
+        log.debug("상품 생성 시작: name={}, price={}, stock={}", request.name(), request.price(), request.stock());
+
         checkDuplicateName(request.name());
 
         Product product = Product.of(request.name(), request.price(), request.stock());
 
         try {
-            return productRepository.save(product);
+            Product savedProduct = productRepository.save(product);
+            log.debug("상품 생성 완료: id={}", savedProduct.getId());
+            return savedProduct;
         } catch (DataIntegrityViolationException e) {
             log.warn("상품명 중복: {}", request.name(), e);
             throw new DuplicateProductNameException(request.name());
@@ -43,15 +48,21 @@ public class ProductService {
 
     @Transactional
     public void decreaseStock(long productId, int quantity) {
+
+        log.debug("재고 감소 서비스 시작: productId={}, quantity={}", productId, quantity);
+
         Product product = productRepository.findById(productId)
                 .orElseThrow(ProductNotFoundException::new);
 
         if (product.getStock() < quantity) {
+            log.warn("재고 부족 발생: productId={}, available={}, requested={}", productId, product.getStock(), quantity);
             throw new InsufficientStockException();
         }
 
         product.decreaseStock(quantity);
 
         productRepository.save(product);
+
+        log.debug("재고 감소 완료: productId={}, stock={}", productId, product.getStock());
     }
 }
