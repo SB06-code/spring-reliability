@@ -8,6 +8,9 @@ import codeit.sb06.reliability.exception.InsufficientStockException;
 import codeit.sb06.reliability.exception.InvalidInputValueException;
 import codeit.sb06.reliability.exception.ProductNotFoundException;
 import codeit.sb06.reliability.repository.ProductRepository;
+import io.micrometer.core.instrument.Counter;
+import io.micrometer.core.instrument.MeterRegistry;
+import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -20,6 +23,16 @@ import org.springframework.transaction.annotation.Transactional;
 public class ProductService {
 
     private final ProductRepository productRepository;
+    private final MeterRegistry meterRegistry;
+
+    private Counter productCreationCounter;
+
+    @PostConstruct
+    public void initMetrics() {
+        productCreationCounter = Counter.builder("product.creations.total")
+                .description("Total number of products created")
+                .register(this.meterRegistry);
+    }
 
     @Transactional
     public Product createProduct(ProductCreateRequest request) {
@@ -32,6 +45,7 @@ public class ProductService {
 
         try {
             Product savedProduct = productRepository.save(product);
+            productCreationCounter.increment();
             log.debug("상품 생성 완료: id={}", savedProduct.getId());
             return savedProduct;
         } catch (DataIntegrityViolationException e) {

@@ -3,7 +3,7 @@ POST http://localhost:8080/api/products
 Content-Type: application/json
 
 {
-  "name": "안녕하세요",
+  "name": "안녕하세요2",
   "price": 10,
   "stock": 5
 }
