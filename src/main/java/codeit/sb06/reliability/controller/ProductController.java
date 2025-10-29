@@ -9,13 +9,11 @@ import codeit.sb06.reliability.exception.ErrorResponse;
 import codeit.sb06.reliability.exception.InvalidInputValueException;
 import codeit.sb06.reliability.exception.ValidationErrorResponse;
 import codeit.sb06.reliability.service.ProductService;
-import codeit.sb06.reliability.validation.ValidationGroups;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
 
