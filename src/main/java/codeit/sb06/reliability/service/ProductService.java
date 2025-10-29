@@ -1,12 +1,13 @@
 package codeit.sb06.reliability.service;
 
 import codeit.sb06.reliability.dto.ProductCreateRequest;
+import codeit.sb06.reliability.dto.ProductUpdateRequest;
 import codeit.sb06.reliability.entity.Product;
 import codeit.sb06.reliability.exception.DuplicateProductNameException;
 import codeit.sb06.reliability.exception.InsufficientStockException;
+import codeit.sb06.reliability.exception.InvalidInputValueException;
 import codeit.sb06.reliability.exception.ProductNotFoundException;
 import codeit.sb06.reliability.repository.ProductRepository;
-import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -39,6 +40,32 @@ public class ProductService {
         }
     }
 
+    @Transactional
+    public Product updateProduct(long productId, ProductUpdateRequest request) {
+        log.debug("상품 수정 시작: id={}, name={}, price={}, stock={}", productId, request.name(), request.price(), request.stock());
+
+        if (request.name() == null && request.price() == null && request.stock() == null) {
+            throw new InvalidInputValueException("상품 수정 데이터 없음.");
+        }
+
+        Product product = productRepository.findById(productId)
+                .orElseThrow(ProductNotFoundException::new);
+
+        if (request.name() != null) {
+            checkDuplicateName(request.name());
+            product.setName(request.name());
+        }
+
+        if (request.price() != null) {
+            product.setPrice(request.price());
+        }
+
+        if (request.stock() != null) {
+            product.setStock(request.stock());
+        }
+
+        return productRepository.save(product);
+    }
     private void checkDuplicateName(String name) {
         var nameExists = productRepository.existsByName(name);
         if (nameExists) {

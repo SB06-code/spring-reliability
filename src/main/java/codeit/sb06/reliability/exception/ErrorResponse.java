@@ -12,11 +12,11 @@ public class ErrorResponse {
     private final String code;
     private final Map<String, Object> details;
 
-    private ErrorResponse(final ErrorCode code) {
+    protected ErrorResponse(final ErrorCode code) {
         this(code, new HashMap<>());
     }
 
-    private ErrorResponse(final ErrorCode code, final Map<String, Object> details) {
+    protected ErrorResponse(final ErrorCode code, final Map<String, Object> details) {
         this.message = code.getMessage();
         this.code = code.getCode();
         this.details = details;

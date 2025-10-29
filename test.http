@@ -3,9 +3,17 @@ POST http://localhost:8080/api/products
 Content-Type: application/json
 
 {
-  "name": "product01",
-  "price": 100,
+  "name": "안녕하세요",
+  "price": 10,
   "stock": 5
+}
+
+### Modify Product 01
+PUT http://localhost:8080/api/products/1
+Content-Type: application/json
+
+{
+  "price": 5
 }
 
 ### Decrease stock of Product 01
