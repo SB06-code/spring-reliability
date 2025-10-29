@@ -1,0 +1,22 @@
+### Create new Product 01
+POST http://localhost:8080/api/products
+Content-Type: application/json
+
+{
+  "name": "product01",
+  "price": 100,
+  "stock": 5
+}
+
+### Decrease stock of Product 01
+PATCH http://localhost:8080/api/products/1/decrease-stock?quantity=1
+
+### Create new Product 01 again
+POST http://localhost:8080/api/products
+Content-Type: application/json
+
+{
+  "name": "product01",
+  "price": 1000,
+  "stock": 10
+}
